@@ -1,0 +1,8 @@
+streamlit
+numpy
+Pillow
+plotly
+open3d
+requests
+openai
+trimesh
