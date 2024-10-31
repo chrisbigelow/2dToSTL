@@ -2,7 +2,6 @@ from api_key_manager import APIKeyManager
 
 import streamlit as st
 import numpy as np
-import cv2
 from PIL import Image
 import plotly.graph_objects as go
 import open3d as o3d
@@ -14,7 +13,6 @@ import logging
 from openai import OpenAI
 import base64
 from io import BytesIO
-import json
 import trimesh
 import streamlit.components.v1 as components
 from pathlib import Path
