@@ -2,6 +2,7 @@ import streamlit as st
 import os
 from typing import Optional
 
+
 class APIKeyManager:
     @staticmethod
     def get_api_key() -> Optional[str]:
@@ -14,22 +15,25 @@ class APIKeyManager:
     
     @staticmethod
     def setup_api_key_ui():
-        """Display API key input in sidebar if not already set"""
+        """Display API key input in sidebar and stop until key is provided"""
         api_key = APIKeyManager.get_api_key()
         
-        if not api_key:
-            st.sidebar.title("API Key Setup")
-            api_key = st.sidebar.text_input(
-                "Enter your Stability AI API key",
-                type="password",
-                help="Get your API key from https://platform.stability.ai/"
-            )
-            
-            if api_key:
-                st.session_state.stability_api_key = api_key
-                os.environ['STABILITY_API_KEY'] = api_key
-                st.sidebar.success("API key saved!")
-            else:
-                st.sidebar.warning("Please enter your Stability AI API key")
+        if api_key:
+            return True
         
-        return api_key is not None
+        # Show input field only if no key exists
+        st.sidebar.title("API Key Setup")
+        new_api_key = st.sidebar.text_input(
+            "Enter your Stability AI API key",
+            type="password",
+            help="Get your API key from https://platform.stability.ai/"
+        )
+        
+        if new_api_key:
+            st.session_state.stability_api_key = new_api_key
+            os.environ['STABILITY_API_KEY'] = new_api_key
+            st.sidebar.success("API key saved!")
+            return True
+        
+        st.sidebar.warning("Please enter your Stability AI API key")
+        st.stop()  # Stop execution until key is provided

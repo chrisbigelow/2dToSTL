@@ -27,7 +27,7 @@ class StabilityAI3DGenerator:
     
     def generate_3d_model(self, image: Image.Image, params: dict) -> bytes:
         """Generate 3D model from image using Stability AI API"""
-        try:
+        try:            
             # Convert PIL Image to bytes
             img_byte_arr = BytesIO()
             image.save(img_byte_arr, format='PNG')
@@ -126,17 +126,25 @@ def convert_glb_to_stl(glb_data: bytes) -> bytes:
 def main():
     st.set_page_config(page_title="Stability AI 3D Generator", layout="wide")
 
+    st.title("Image to 3D Model Generator")
+    st.write("Upload an image to generate a 3D model using Stability AI Stable Fast 3D")
+
     # Setup API key first
-    if not APIKeyManager.setup_api_key_ui():
+    setup_result = APIKeyManager.setup_api_key_ui()
+    
+    if not setup_result:
+        logger.warning("No API key provided, stopping application")
         st.error("Please provide a Stability AI API key in the sidebar to use the application.")
         st.stop()
     
-    st.title("Image to 3D Model Generator")
-    st.write("Upload an image to generate a 3D model using Stability AI Stable Fast 3D")
+    logger.info("API key setup successful, proceeding with application")
     
-    # Initialize the generator
+    # Get the actual API key after setup
+    api_key = APIKeyManager.get_api_key()
+    
+    # Initialize the generator only after we have a valid API key
     if 'generator' not in st.session_state:
-        api_key = APIKeyManager.get_api_key()
+        logger.info("Creating new StabilityAI3DGenerator instance")
         st.session_state.generator = StabilityAI3DGenerator(api_key)
     
     # Create columns for parameters
